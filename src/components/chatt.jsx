@@ -126,7 +126,7 @@ function App() {
     setLoading(true);
 // 34.60.94.125
     try {
-      const response = await fetch(`http://shobhit.fourbrick.in/chat?query=${encodeURIComponent(query)}`);
+      const response = await fetch(`https://shobhit.fourbrick.in/chat?query=${encodeURIComponent(query)}`);
       const reader = response.body.getReader();
       let botMessage = "";
       let isCode = false;

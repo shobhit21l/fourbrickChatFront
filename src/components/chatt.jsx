@@ -126,26 +126,41 @@ function App() {
     setLoading(true);
 // 34.60.94.125
     try {
-      const response = await fetch(`https://shobhit.fourbrick.in/chat?query=${encodeURIComponent(query)}`);
+      const response = await fetch(`https://shobhitapi.fourbrick.in/chat?query=${encodeURIComponent(query)}`);
       const reader = response.body.getReader();
       let botMessage = "";
-      let isCode = false;
+      // let isCode = false;
+      const decoder = new TextDecoder();
 
+
+      // const processStream = async () => {
+      //   while (true) {
+      //     const { done, value } = await reader.read();
+      //     if (done) break;
+      //     const chunk = new TextDecoder("utf-8").decode(value);
+      //     botMessage += chunk;
+
+      //     isCode = botMessage.includes("```");
+
+      //     setMessages((prevMessages) => [
+      //       ...newMessages,
+      //       { text: formatMessage(botMessage), sender: "bot", isCode },
+      //     ]);
+      //   }
+      // };
       const processStream = async () => {
         while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = new TextDecoder("utf-8").decode(value);
-          botMessage += chunk;
+           const { done, value } = await reader.read();
+           if (done) break;
+           botMessage += decoder.decode(value, { stream: true });
 
-          isCode = botMessage.includes("```");
-
-          setMessages((prevMessages) => [
-            ...newMessages,
-            { text: formatMessage(botMessage), sender: "bot", isCode },
-          ]);
+           // Update the state with the streamed message.
+           setMessages((prevMessages) => [
+              ...newMessages,
+              { text: formatMessage(botMessage), sender: "bot" },
+           ]);
         }
-      };
+     };
 
       await processStream();
     } catch (error) {
